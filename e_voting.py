@@ -1,4 +1,3 @@
-from turtle import update
 from web3 import Web3
 from web3 import EthereumTesterProvider
 from fastapi import FastAPI 
