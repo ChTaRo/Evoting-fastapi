@@ -10,33 +10,12 @@ abi = '[ { "inputs": [ { "internalType": "string", "name": "_name", "type": "str
 contract_address = '0x2a663900B2c598AE2572a132Ba23B1D3CAB8ed71'
 contract_instance = w3.eth.contract(address=contract_address, abi = abi)
 
-#add min acc
 address = '0xeC25b117bb210F90C7616314c45C1E5432934925'
 privatekey = '72963673a1fad7dd249783f505c00a5c33cdd6ea651218764dacef3c86cc1c51'
 
 @app.get("/")
 async def home():
     return {"message": "Hello World"}
-
-@app.get("/addCandidate/{name}")
-async def addCandidate(name:str):
-    nonce = w3.eth.getTransactionCount(address)
-    update_transaction = contract_instance.functions.addCandidate(name).buildTransaction({
-        'gas': 1800000,
-        'gasPrice': w3.toWei('50', 'gwei'),
-        'from': address,
-        'nonce': nonce
-    })
-    sign_transaction = w3.eth.account.sign_transaction(update_transaction, private_key = privatekey)
-    transaction_hash = w3.eth.send_raw_transaction(sign_transaction.rawTransaction)
-    transaction_hash = w3.toHex(transaction_hash)
-    return {"hash": transaction_hash}
-
-@app.get("/ShowCandidate")
-async def ShowCandidate():
-    candidate = contract_instance.functions.ShowCandidate().call()
-    candidate = str(candidate)
-    return {"Candidate": candidate}
 
 @app.get("/addUser/{name}&{customerId}&{position}")
 async def addUser(name:str, customerId:str, position:str):
@@ -52,6 +31,19 @@ async def addUser(name:str, customerId:str, position:str):
     transaction_hash = w3.toHex(transaction_hash)
     return {"hash": transaction_hash}
 
+@app.get("/addCandidate/{name}")
+async def addCandidate(name:str):
+    nonce = w3.eth.getTransactionCount(address)
+    update_transaction = contract_instance.functions.addCandidate(name).buildTransaction({
+        'gas': 1800000,
+        'gasPrice': w3.toWei('50', 'gwei'),
+        'from': address,
+        'nonce': nonce
+    })
+    sign_transaction = w3.eth.account.sign_transaction(update_transaction, private_key = privatekey)
+    transaction_hash = w3.eth.send_raw_transaction(sign_transaction.rawTransaction)
+    transaction_hash = w3.toHex(transaction_hash)
+    return {"hash": transaction_hash}
 
 @app.get("/chooseCandidate/{candidateIndex}&{customerId}")
 async def chooseCandidate(candidateIndex:int, customerId:str):
@@ -73,4 +65,9 @@ async def winningCandidateName():
     candidate = str(candidate)
     return {"Candidate": candidate}
 
+@app.get("/ShowCandidate")
+async def ShowCandidate():
+    candidate = contract_instance.functions.ShowCandidate().call()
+    candidate = str(candidate)
+    return {"Candidate": candidate}
 
