@@ -52,3 +52,26 @@ async def addUser(name:str, customerId:str, position:str):
     transaction_hash = w3.eth.send_raw_transaction(sign_transaction.rawTransaction)
     transaction_hash = w3.toHex(transaction_hash)
     return {"hash": transaction_hash}
+
+
+@app.get("/chooseCandidate/{candidateIndex}&{customerId}")
+async def chooseCandidate(candidateIndex:int, customerId:str):
+    nonce = w3.eth.getTransactionCount(address)
+    update_transaction = contract_instance.functions.chooseCandidate(candidateIndex,customerId).buildTransaction({
+        'gas': 1800000,
+        'gasPrice': w3.toWei('50', 'gwei'),
+        'from': address,
+        'nonce': nonce
+    })
+    sign_transaction = w3.eth.account.sign_transaction(update_transaction, private_key = privatekey)
+    transaction_hash = w3.eth.send_raw_transaction(sign_transaction.rawTransaction)
+    transaction_hash = w3.toHex(transaction_hash)
+    return {"hash": transaction_hash}
+
+@app.get("/winningCandidateName")
+async def winningCandidateName():
+    candidate = contract_instance.functions.winningCandidateName().call()
+    candidate = str(candidate)
+    return {"Candidate": candidate}
+
+
