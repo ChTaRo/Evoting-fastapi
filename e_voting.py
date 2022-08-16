@@ -1,7 +1,10 @@
 from web3 import Web3
 from web3 import EthereumTesterProvider
-from fastapi import FastAPI 
+from fastapi import FastAPI
+from dotenv import load_dotenv
+import os 
 app = FastAPI()
+load_dotenv()
 
 provider_url = 'https://eth-rinkeby.alchemyapi.io/v2/nzd3qo7YE9BQAs5x4dTkyUVJUyi9u8kQ'
 w3 = Web3(Web3.HTTPProvider(provider_url))
@@ -11,7 +14,7 @@ contract_address = '0x2a663900B2c598AE2572a132Ba23B1D3CAB8ed71'
 contract_instance = w3.eth.contract(address=contract_address, abi = abi)
 
 address = '0xeC25b117bb210F90C7616314c45C1E5432934925'
-privatekey = '72963673a1fad7dd249783f505c00a5c33cdd6ea651218764dacef3c86cc1c51'
+privatekey = os.environ['PRIVATE_KEY']
 
 @app.get("/")
 async def home():
